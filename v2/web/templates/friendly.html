@@ -2,24 +2,54 @@
 <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="http://underscorejs.org/underscore-min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+</head>
+<body>
+    <input id="target" value="Vesta" /><button id="go">Go</button>
+    <div id="map3d" style="height: 400px; width: 600px;"></div>
     <script>
     var results = {};
     $(document).ready(function () {
+        /*
         var processResults = function (data, status, xhr) {
             console.log(data)
         };
 
         var search = function (e) {
-            var target = $('#target').val();
             $.get('/api/kml/search', {target: target}, processResults);
         };
+        */
 
-        $('#go').on('click', search);
+        $('#go').on('click', function (e) {
+            e.preventDefault();
+
+            var target = $('#target').val();
+            var query = encodeURIComponent(window.location.hostname + '/api/kml/search?target=' + target);
+
+            var link = window.ge.createLink('');
+            var href = 'http://code.google.com/'
+                       + 'apis/earth/documentation/samples/kml_example.kml'
+                       link.setHref(href);
+
+            var networkLink = window.ge.createNetworkLink('');
+            networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
+
+            window.ge.getFeatures().appendChild(networkLink);
+
+        });
+
+        window.loadMaps = function () {
+            google.load("earth", "1", {"callback": function () {
+                    google.earth.createInstance('map3d', function (instance) {
+                        window.ge = instance;
+                        window.ge.getOptions().setMapType(ge.MAP_TYPE_SKY);
+                        window.ge.getWindow().setVisibility(true);
+                    }, function () {});
+            }});
+        }
+
+        window.loadMaps();
     });
     </script>
-</head>
-<body>
-    <input id="target" value="Vesta" /><button id="go">Go</button>
-    <div id="results"></div>
 </body>
 </html>
