@@ -10,16 +10,6 @@
     <script>
     var results = {};
     $(document).ready(function () {
-        /*
-        var processResults = function (data, status, xhr) {
-            console.log(data)
-        };
-
-        var search = function (e) {
-            $.get('/api/kml/search', {target: target}, processResults);
-        };
-        */
-
         $('#go').on('click', function (e) {
             e.preventDefault();
 
@@ -42,9 +32,17 @@
                         window.ge.getWindow().setVisibility(true);
                     }, function () {});
             }});
-        }
+        };
 
         window.loadMaps();
+
+        window.leapmotion_init = function () {
+            var ws = new WebSocket('ws://localhost:6437/');
+
+            ws.onmessage = function (event) {
+                
+            };
+        };
     });
     </script>
 </body>
