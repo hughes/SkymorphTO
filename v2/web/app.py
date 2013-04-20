@@ -48,7 +48,11 @@ def kml_search():
         i['west'] = i['ra'] - 0.5
         i['north'] = i['dec'] + 0.5
         i['south'] = i['dec'] - 0.5
+
+        # TODO: fix this
         i['rotation'] = 0
+
+        i['time'] = img['time']
 
         i['placemarkX'] = convert(img['predicted_ra'])
         i['placemarkY'] = convert(img['predicted_dec'])
