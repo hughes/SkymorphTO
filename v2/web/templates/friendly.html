@@ -3,6 +3,8 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="http://underscorejs.org/underscore-min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="/static/js/controller.js"></script>
+    <script type="text/javascript" src="/static/js/view.js"></script>
 </head>
 <body>
     <input id="target" value="Vesta" /><button id="go">Go</button>
@@ -38,10 +40,8 @@
 
         window.leapmotion_init = function () {
             var ws = new WebSocket('ws://localhost:6437/');
-
-            ws.onmessage = function (event) {
-                
-            };
+            // On message received
+            ws.onmessage = recieveData;
         };
     });
     </script>
