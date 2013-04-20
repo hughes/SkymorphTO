@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, session, url_for, render_template, Response, jsonify, make_response
 from flask.ext.assets import Environment
 import json
+import simplekml
 
 
 import api
@@ -34,15 +35,20 @@ def friendly():
 
 @app.route("/api/kml/search")
 def kml_search():
+    target = request.args.get('target')
     # Get skymorph images (this takes quite some time)
-    results = skymorph.search_target(request.args.get('target'))
+    results = skymorph.search_target(target)
 
     images = []
+
+    kml = simplekml.Kml()
+    # This is KML for Google Sky
+    kml.hint = 'target=sky'
 
     # Iterate over each image result and simplify it
     for img in results:
         i = {}
-        i['src'] = '/api/skymorph/image?key=%s' % img['key']
+        i['src'] = 'http://www.asterank.com/api/skymorph/image?key=%s' % img['key']
         i['ra'] = convert(img['center_ra'])
         i['dec'] = convert(img['center_dec'])
         i['east'] = i['ra'] + 0.5
@@ -60,20 +66,34 @@ def kml_search():
 
         images.append(i)
 
-    print images
+        overlay = kml.newgroundoverlay(name=target)
+        overlay.icon.viewboundscale = 0.75
+        overlay.icon.href = i.get('src')
 
-    # KMLify it
+        # full opacity!
+        overlay.color = 'ffffffff'
 
-    # Return the KML to client, to render
-    data = {'kml_url': '',
-            'width': 1000,
-            'height': 800}
+        overlay.lookat = simplekml.LookAt()
+        overlay.lookat.longitude = i.get('ra')
+        overlay.lookat.latitude = i.get('dec')
+        overlay.lookat.tilt = 0
+        # TODO: fix this
+        overlay.lookat.range = 110658
+        overlay.lookat.gxaltitudemode = 'relativeToSeaFloor'
+        overlay.lookat.gxtimestamp = simplekml.GxTimeStamp(when=i.get('time'))
 
-    return render_template(
-        'kml.html',
-        **data)
+        overlay.latlonbox = simplekml.LatLonBox(
+            north=i.get('north'),
+            south=i.get('south'),
+            east=i.get('east'),
+            west=i.get('west'),
+            rotation=0)  # TODO: rotation
 
-    #return jsonify({'results': images})
+        kml.newpoint(name=target, coords=[
+            (i.get('placemarkX'), i.get('placemarkY'))
+        ])
+
+    return Response(kml.kml(), mimetype='application/vnd.google-earth.kml+xml')
 
 
 @app.route('/api/mpc')
