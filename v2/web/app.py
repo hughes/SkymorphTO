@@ -28,7 +28,22 @@ def friendly():
 @app.route("/api/kml/search")
 def kml_search():
   results = skymorph.search_target(request.args.get('target'))
-  images = ['/api/skymorph/image?key=%s' % r['key'] for r in results]
+
+  images = []
+  
+  for img in results:
+    i = {}
+    i['src'] = '/api/skymorph/image?key=%s' % img['key']
+    ra = [float(a) for a in img['center_ra'].split()]
+    dec = [float(a) for a in img['center_dec'].split()]
+    i['ra'] = ra[0] + ra[1]/60 + ra[2]/3600
+    i['dec'] = abs(dec[0]) + dec[1]/60 + dec[2]/3600
+    if dec[0] < 0:
+      i['dec'] = -i['dec'] 
+    images.append(i)
+
+  print images
+
   return jsonify({'results': images})
 
 
