@@ -21,6 +21,17 @@ assets = Environment(app)
 def index():
   return render_template('index.html')
 
+@app.route("/friendly")
+def friendly():
+  return render_template('friendly.html')
+
+@app.route("/api/kml/search")
+def kml_search():
+  results = skymorph.search_target(request.args.get('target'))
+  images = ['/api/skymorph/image?key=%s' % r['key'] for r in results]
+  return jsonify({'results': images})
+
+
 @app.route('/api/mpc')
 def api_mpc():
   try:
