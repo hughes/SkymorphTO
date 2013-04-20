@@ -13,11 +13,23 @@
     var results = {};
     function RemoveAllFeatures()
     {
-      var features = ge.getFeatures();
-      while (features.getLastChild() != null)
-      {
+
+        var root = window.ge.getLayerRoot();
+        var folders = root.getElementsByType('KmlFolder').getLength();
+
+        for (var id = 0; id < folders; id++) {
+            // Get all the Folders in the root KML, and hide them
+            // This disables the constellations, messier, etc.
+            // Basically everything we don't care about
+            console.log(id);
+            root.getElementsByType('KmlFolder').item(id).setVisibility(false)
+        }
+
+        var features = ge.getFeatures();
+        while (features.getLastChild() != null)
+        {
         features.removeChild(features.getLastChild());
-      }
+        }
     }
     $(document).ready(function () {
         $('#go').on('click', function (e) {
@@ -42,15 +54,6 @@
                         window.ge = instance;
                         window.ge.getOptions().setMapType(ge.MAP_TYPE_SKY);
                         window.ge.getWindow().setVisibility(true);
-                        var root = window.ge.getLayerRoot();
-                        var folders = root.getElementsByType('KmlFolder').getLength();
-
-                        for (var id = 0; id < folders; id++) {
-                            // Get all the Folders in the root KML, and hide them
-                            // This disables the constellations, messier, etc.
-                            // Basically everything we don't care about
-                            root.getElementsByType('KmlFolder').item(id).setVisibility(false)
-                        }
                     }, function () {});
             }});
         };
