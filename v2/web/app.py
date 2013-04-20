@@ -39,14 +39,15 @@ def kml_search():
     i['ra'] = ra[0] + ra[1]/60 + ra[2]/3600
     i['dec'] = abs(dec[0]) + dec[1]/60 + dec[2]/3600
 
+    if dec[0] < 0:
+      i['dec'] = -i['dec']
+
     i['east'] = i['ra'] + 0.5
     i['west'] = i['ra'] - 0.5
     i['north'] = i['dec'] + 0.5
     i['south'] = i['dec'] - 0.5
     i['rotation'] = 0
-    
-    if dec[0] < 0:
-      i['dec'] = -i['dec'] 
+
     images.append(i)
 
   print images
