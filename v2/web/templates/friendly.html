@@ -9,6 +9,14 @@
     <div id="map3d" style="height: 90%; width: 100%;"></div>
     <script>
     var results = {};
+    function RemoveAllFeatures()
+    {
+      var features = ge.getFeatures();
+      while (features.getLastChild() != null)
+      {
+        features.removeChild(features.getLastChild());
+      }
+    }
     $(document).ready(function () {
         /*
         var processResults = function (data, status, xhr) {
@@ -31,6 +39,8 @@
             var networkLink = window.ge.createNetworkLink('');
             networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
 
+            RemoveAllFeatures()
+
             window.ge.getFeatures().appendChild(networkLink);
         });
 
@@ -40,6 +50,15 @@
                         window.ge = instance;
                         window.ge.getOptions().setMapType(ge.MAP_TYPE_SKY);
                         window.ge.getWindow().setVisibility(true);
+                        var root = window.ge.getLayerRoot();
+                        var folders = root.getElementsByType('KmlFolder').getLength();
+
+                        for (var id = 0; id < folders; id++) {
+                            // Get all the Folders in the root KML, and hide them
+                            // This disables the constellations, messier, etc.
+                            // Basically everything we don't care about
+                            root.getElementsByType('KmlFolder').item(id).setVisibility(false)
+                        }
                     }, function () {});
             }});
         }
