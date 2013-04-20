@@ -1,5 +1,5 @@
 var leapData = [];
-var recieving_data = false;
+var recieving_data = true;
 var keys = ['x', 'y', 'z', 'pitch', 'yaw'];
 // var normal = {speed: 50, direction: -5000, zoom:200}; // direction is never normalized
 var NORMAL_SPEED = 50; var SPEED_TOLERANCE = 20;
