@@ -16,6 +16,13 @@ app.secret_key = 'not a secret key'
 # bundling
 assets = Environment(app)
 
+def convert(triplet_str):
+  a = [float(t) for t in triplet_str.split()]
+  result = a[0] + a[1]/60 + a[2]/3600
+  if a[0] < 0:
+    result = -result
+  return result
+
 # main routes/api routes
 @app.route("/")
 def index():
@@ -34,19 +41,17 @@ def kml_search():
   for img in results:
     i = {}
     i['src'] = '/api/skymorph/image?key=%s' % img['key']
-    ra = [float(a) for a in img['center_ra'].split()]
-    dec = [float(a) for a in img['center_dec'].split()]
-    i['ra'] = ra[0] + ra[1]/60 + ra[2]/3600
-    i['dec'] = abs(dec[0]) + dec[1]/60 + dec[2]/3600
 
-    if dec[0] < 0:
-      i['dec'] = -i['dec']
-
+    i['ra'] = convert(img['center_ra'])
+    i['dec'] = convert(img['center_dec'])
     i['east'] = i['ra'] + 0.5
     i['west'] = i['ra'] - 0.5
     i['north'] = i['dec'] + 0.5
     i['south'] = i['dec'] - 0.5
     i['rotation'] = 0
+
+    i['placemarkX'] = convert(img['predicted_ra'])
+    i['placemarkY'] = convert(img['predicted_dec'])
 
     images.append(i)
 
