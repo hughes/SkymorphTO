@@ -37,7 +37,7 @@ def kml_search():
   results = skymorph.search_target(request.args.get('target'))
 
   images = []
-  
+
   for img in results:
     i = {}
     i['src'] = '/api/skymorph/image?key=%s' % img['key']
