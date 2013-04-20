@@ -23,10 +23,10 @@ function stepFrame(){
   console.log("stepping!");
   var movement = getMovement();
   if(movement){
-    pan(movement.direction, movement.speed);
-    zoom(movement.zoom);
-    pitch(movement.pitch);
-    yaw(movement.yaw);
+    pan(movement.direction * 1000, movement.speed * 1000);
+    zoom(movement.zoom * 1000);
+    pitch(movement.pitch * 1000);
+    yaw(movement.yaw * 1000);
   }
 }
 
