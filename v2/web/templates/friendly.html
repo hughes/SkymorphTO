@@ -6,7 +6,7 @@
 </head>
 <body>
     <input id="target" value="Vesta" /><button id="go">Go</button>
-    <div id="map3d" style="height: 400px; width: 600px;"></div>
+    <div id="map3d" style="height: 90%; width: 100%;"></div>
     <script>
     var results = {};
     $(document).ready(function () {
@@ -24,18 +24,14 @@
             e.preventDefault();
 
             var target = $('#target').val();
-            var query = encodeURIComponent(window.location.hostname + '/api/kml/search?target=' + target);
-
             var link = window.ge.createLink('');
-            var href = 'http://code.google.com/'
-                       + 'apis/earth/documentation/samples/kml_example.kml'
-                       link.setHref(href);
+            var href = 'http://' + window.location.host + '/api/kml/search?target=' + target;
+            link.setHref(href);
 
             var networkLink = window.ge.createNetworkLink('');
             networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
 
             window.ge.getFeatures().appendChild(networkLink);
-
         });
 
         window.loadMaps = function () {
