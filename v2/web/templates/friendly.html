@@ -412,6 +412,8 @@
 
         var counter = 0;
 
+        var last_translation = [0, 200, 0];
+
         //request animation frame and connect to leap socket
         Leap.loop(function(frame) {
             if (frame.valid) {
@@ -422,35 +424,37 @@
                     var hand = frame.hands[0];
                     if (window.ge) {
                         counter++;
-                        if (counter > 20) {
+                        if (counter > 5) {
                             counter = 0;
                             console.log('checking');
-                            var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_RELATIVE_TO_GROUND);
+                            window.ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+                            var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_ABSOLUTE);
                             var latitude = 0;
                             var longitude = 0;
                             var range = 1.0;
 
                             if (hand._translation[0] < 0) {
-                                longitude = 0.1;
+                                longitude = 0.1 * hand._translation[0];
                             }
                             if (hand._translation[0] > 0) {
-                                longitude = -0.1;
+                                longitude = -0.1 * hand._translation[0];
                             }
                             if (hand._translation[1] < 200) {
-                                latitude = -0.1;
+                                latitude = -1.0;
                             } 
                             if (hand._translation[1] > 200) {
-                                latitude = 0.1;
+                                latitude = 1.0;
                             }
                             if (hand._translation[2] < 0) {
-                                range = 1.1;
+                                range = 0.1;
                             }
-                            if (hand._translation[3] > 0) {
-                                range = 0.9;
+                            if (hand._translation[2] > 0) {
+                                range = 10.0;
                             }
+                            console.log(longitude);
                             lookAt.setLongitude(lookAt.getLongitude() + longitude);
-                            lookAt.setLatitude(lookAt.getLatitude() + latitude);
-                            lookAt.setRange(lookAt.getRange() * range);
+                            //lookAt.setLatitude(lookAt.getLatitude() + latitude);
+                            //lookAt.setRange(lookAt.getRange() * range);
                             
                             ge.getView().setAbstractView(lookAt);
                         }
