@@ -317,7 +317,7 @@
         <option value="Zelinda">Zelinda</option>
         <option value="Zwetana">Zwetana</option>
     </select>
-    <div id="kmlloading" style="display:none;">Loading...</div>
+    <div id="kmlloading" style="display:none; text-align: center;">Loading... <br><img src='/static/img/loading.gif' /></div>
     <div id="kmlloading-error" style="display:none; color: red;">
         Something went wrong!
     </div>
@@ -361,6 +361,7 @@
                 autoOpen: false,
                 modal: false
             });
+            $(".ui-dialog-titlebar").hide()
             // Show kmlloading:
             $("#kmlloading").dialog('open');
             // Pre-cache URL:
