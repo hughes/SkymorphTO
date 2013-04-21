@@ -34,6 +34,7 @@ function stepFrame(){
 //direction is angle (degrees) where 0 = straign ahead, then clockwise
 function pan(direction, speed) {
   console.log("panning!");
+  if (ge === undefined) { return false; }
   // an example of some camera manipulation that's possible w/ the Earth API
   var lookAt = ge.getView().copyAsLookAt(ge.ALTITUDE_RELATIVE_TO_GROUND);
   // debugger;

@@ -13,7 +13,7 @@ function recieveData(event){
 		var data = JSON.parse(event.data);
 		if(leapData.length >= 4){
 			stepFrame();
-		} else if(data.hands.length > 0){
+		} else if(data.hands != undefined && data.hands.length > 0){
 			console.log("recording!");
 			data = data.hands[0];
 
