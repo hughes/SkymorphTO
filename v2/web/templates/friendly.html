@@ -426,9 +426,8 @@
                     var hand = frame.hands[0];
                     if (window.ge) {
                         counter++;
-                        if (counter > 5) {
+                        if (counter > 2) {
                             counter = 0;
-                            console.log('checking');
                             window.ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
                             var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_ABSOLUTE);
                             var latitude = 0;
@@ -436,14 +435,14 @@
                             var range = 1.0;
 
                             if (hand._translation[0] < 0) {
-                                longitude = 0.1 * hand._translation[0];
+                                longitude = 1;
                             }
                             if (hand._translation[0] > 0) {
-                                longitude = -0.1 * hand._translation[0];
+                                longitude = -1;
                             }
                             if (hand._translation[1] < 200) {
                                 latitude = -1.0;
-                            } 
+                            }
                             if (hand._translation[1] > 200) {
                                 latitude = 1.0;
                             }
@@ -453,11 +452,10 @@
                             if (hand._translation[2] > 0) {
                                 range = 10.0;
                             }
-                            console.log(longitude);
                             lookAt.setLongitude(lookAt.getLongitude() + longitude);
                             //lookAt.setLatitude(lookAt.getLatitude() + latitude);
                             //lookAt.setRange(lookAt.getRange() * range);
-                            
+
                             ge.getView().setAbstractView(lookAt);
                         }
                     }
