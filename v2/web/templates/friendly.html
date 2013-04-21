@@ -3,8 +3,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="http://underscorejs.org/underscore-min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="/static/js/controller.js"></script>
-    <script type="text/javascript" src="/static/js/view.js"></script>
+    <script type="text/javascript" src="static/js/leap.js"></script>
 </head>
 <body>
     <input id="target" value="Vesta" /><button id="go">Go</button>
@@ -59,13 +58,44 @@
 
         window.loadMaps();
 
-        window.leapmotion_init = function () {
-            var ws = new WebSocket('ws://localhost:6437/');
-            // On message received
-            ws.onmessage = recieveData;
-        };
+        // initialize LeapMotion
+        var firstValidFrame = null;
+        function map(value, inputMin, inputMax, outputMin, outputMax){
+            outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);  
+            if(outVal >  outputMax){
+                outVal = outputMax;
+            }
+            if(outVal <  outputMin){
+                outVal = outputMin;
+            } 
+            return outVal;
+        }
 
-        window.leapmotion_init();
+        //request animation frame and connect to leap socket
+        Leap.loop(function(frame) {
+            if (frame.valid) {
+                if (!firstValidFrame) firstValidFrame = frame
+                var t = firstValidFrame.translation(frame)
+
+                //limit y-axis between 0 and 180 degrees
+                curY = map(t[1], -300, 300, 0, 179)
+
+                //assign rotation coordinates
+                rotateX = t[0]
+                rotateY = -curY
+
+                zoom = Math.max(0, t[2]);
+                zoomFactor = 1/(1 + (zoom / 150));
+
+                //console.log(rotateX, rotateY, zoom, zoomFactor);
+                if (window.ge) {
+                    var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_RELATIVE_TO_GROUND);
+                    lookAt.setLatitude(rotateX);
+                    lookAt.setLatitude(rotateY);
+                    ge.getView().setAbstractView(lookAt);
+                }
+            }
+        }.bind(this));
     });
     </script>
 </body>
