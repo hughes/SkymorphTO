@@ -414,64 +414,65 @@
 
         var counter = 0;
 
-        var last_translation = [0, 200, 0];
-
         //request animation frame and connect to leap socket
-        Leap.loop(function(frame) {
+        Leap.loop({enableGestures: true}, function(frame) {
             if (frame.valid) {
                 if (!firstValidFrame) firstValidFrame = frame
                 var t = firstValidFrame.translation(frame)
 
-                if (frame.hands && frame.hands.length > 0) {
-                    var hand = frame.hands[0];
-                    if (window.ge) {
-                        counter++;
-                        if (counter > 2) {
-                            counter = 0;
-                            window.ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
-                            var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_ABSOLUTE);
-                            var latitude = 0;
-                            var longitude = 0;
-                            var range = 1.0;
+                if (frame.gestures.length > 0) {
+                    for (var i = 0; i < frame.gestures.length; i++) {
+                        var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_ABSOLUTE);
+                        var gesture = frame.gestures[i];
+                        var moveby = 30;
+                        moveby = ((1/lookAt.getRange())*600000) * moveby
+                        var diff = 0.5;
+                        var zoomby = 0.2;
 
-                            if (hand._translation[0] < 0) {
-                                longitude = 1;
-                            }
-                            if (hand._translation[0] > 0) {
-                                longitude = -1;
-                            }
-                            if (hand._translation[1] < 200) {
-                                latitude = -1.0;
-                            }
-                            if (hand._translation[1] > 200) {
-                                latitude = 1.0;
-                            }
-                            if (hand._translation[2] < 0) {
-                                range = 0.1;
-                            }
-                            if (hand._translation[2] > 0) {
-                                range = 10.0;
-                            }
-                            lookAt.setLongitude(lookAt.getLongitude() + longitude);
-                            //lookAt.setLatitude(lookAt.getLatitude() + latitude);
-                            //lookAt.setRange(lookAt.getRange() * range);
+                        var latitude = 0;
+                        var longitude = 0;
+                        var zoom = 1;
 
-                            ge.getView().setAbstractView(lookAt);
+                        // Figure out movement
+                        if (gesture.type == 'swipe') {
+                            var direction = {
+                                lng: gesture.direction[0],
+                                lat: gesture.direction[1],
+                                zoom: gesture.direction[2]
+                            }
+
+                            //console.log(direction);
+
+                            if (direction.lng < -diff) {
+                                longitude = moveby;
+                            } else if (direction.lng > diff) {
+                                longitude = -moveby;
+                            }
+
+                            if (direction.lat < -diff) {
+                                latitude = -moveby;
+                            } else if (direction.lat > diff) {
+                                latitude = moveby;
+                            }
+
+                            if (direction.zoom < -diff) {
+                                zoom = zoom - zoomby;
+                            } else if (direction.zoom > diff) {
+                                zoom = zoom + zoomby;
+                            }
                         }
+
+
+                        // Use movement
+                        //window.ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+                        window.ge.getOptions().setFlyToSpeed(1.0);
+                        lookAt.setLongitude(lookAt.getLongitude() + longitude);
+                        lookAt.setLatitude(lookAt.getLatitude() + latitude);
+                        lookAt.setRange(lookAt.getRange() * zoom);
+                        ge.getView().setAbstractView(lookAt);
                     }
                 }
 
-                //limit y-axis between 0 and 180 degrees
-                //curY = map(t[1], -300, 300, 0, 179)
-
-                ////assign rotation coordinates
-                //rotateX = t[0]
-                //rotateY = -curY
-
-                //zoom = Math.max(0, t[2]);
-                //zoomFactor = 1/(1 + (zoom / 150));
-
-                ////console.log(rotateX, rotateY, zoom, zoomFactor);
             }
         }.bind(this));
     });
