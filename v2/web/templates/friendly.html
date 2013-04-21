@@ -417,23 +417,27 @@
                 if (!firstValidFrame) firstValidFrame = frame
                 var t = firstValidFrame.translation(frame)
 
-                //limit y-axis between 0 and 180 degrees
-                curY = map(t[1], -300, 300, 0, 179)
-
-                //assign rotation coordinates
-                rotateX = t[0]
-                rotateY = -curY
-
-                zoom = Math.max(0, t[2]);
-                zoomFactor = 1/(1 + (zoom / 150));
-
-                //console.log(rotateX, rotateY, zoom, zoomFactor);
-                if (window.ge) {
-                    var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_RELATIVE_TO_GROUND);
-                    lookAt.setLatitude(rotateX);
-                    lookAt.setLatitude(rotateY);
-                    ge.getView().setAbstractView(lookAt);
+                if (frame.hands && frame.hands.length > 0) {
+                    console.log('hands', frame);
                 }
+
+                //limit y-axis between 0 and 180 degrees
+                //curY = map(t[1], -300, 300, 0, 179)
+
+                ////assign rotation coordinates
+                //rotateX = t[0]
+                //rotateY = -curY
+
+                //zoom = Math.max(0, t[2]);
+                //zoomFactor = 1/(1 + (zoom / 150));
+
+                ////console.log(rotateX, rotateY, zoom, zoomFactor);
+                //if (window.ge) {
+                //    var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_RELATIVE_TO_GROUND);
+                //    lookAt.setLatitude(rotateX);
+                //    lookAt.setLatitude(rotateY);
+                //    ge.getView().setAbstractView(lookAt);
+                //}
             }
         }.bind(this));
     });
