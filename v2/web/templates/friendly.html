@@ -316,6 +316,7 @@
         <option value="Zelinda">Zelinda</option>
         <option value="Zwetana">Zwetana</option>
     </select>
+    <input id="grid-toggle" type='button' value="Toggle Grid"></input>
     <div id="kmlloading" style="display:none; text-align: center;">Loading... <br><img src='/static/img/loading.gif' /></div>
     <div id="kmlloading-error" style="display:none; color: red;">
         Something went wrong!
@@ -396,6 +397,10 @@
                     }, function () {}, {});
             }});
         };
+
+        $('#grid-toggle').on('click', function (e) {
+            window.ge.getOptions().setGridVisibility(!window.ge.getOptions().getGridVisibility());
+        }.bind(this));
 
         window.loadMaps();
 
