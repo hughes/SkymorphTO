@@ -89,9 +89,9 @@ def kml_search():
             west=i.get('west'),
             rotation=0)  # TODO: rotation
 
-        kml.newpoint(name=target, coords=[
-            (i.get('placemarkX'), i.get('placemarkY'))
-        ])
+        # kml.newpoint(name=target, coords=[
+        #     (i.get('placemarkX'), i.get('placemarkY'))
+        # ])
 
     return Response(kml.kml(), mimetype='application/vnd.google-earth.kml+xml')
 
