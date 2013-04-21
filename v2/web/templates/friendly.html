@@ -343,6 +343,21 @@
             var target = $('#target').val();
             var link = window.ge.createLink('');
             var href = 'http://' + window.location.host + '/api/kml/search?target=' + target;
+
+            // Show loading:
+            // TODO
+            // Pre-cache URL:
+            $.ajax({
+                type: 'GET',
+                url: href,
+                success: function() {
+                    //TODO: remove loading
+                },
+                error: function() {
+                    //TODO: remove loading, show error
+                }
+            });
+
             link.setHref(href);
 
             var networkLink = window.ge.createNetworkLink('');
