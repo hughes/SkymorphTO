@@ -7,6 +7,8 @@
     <script type="text/javascript" src="/static/js/view.js"></script>
     <script type="text/javascript" src="/static/js/lib/select2/select2.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/js/lib/select2/select2.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 </head>
 <body>
     <select id="target">
@@ -315,6 +317,10 @@
         <option value="Zelinda">Zelinda</option>
         <option value="Zwetana">Zwetana</option>
     </select>
+    <div id="kmlloading" style="display:none;">Loading...</div>
+    <div id="kmlloading-error" style="display:none; color: red;">
+        Something went wrong!
+    </div>
     <div id="map3d" style="height: 95%; width: 100%; margin-top: 10px;"></div>
     <script>
     var results = {};
@@ -347,28 +353,37 @@
             var link = window.ge.createLink('');
             var href = 'http://' + window.location.host + '/api/kml/search?target=' + target;
 
-            // Show loading:
-            // TODO
+            $("#kmlloading").dialog({
+                //autoOpen: false,
+                modal: true
+            });
+            $("#kmlloading-error").dialog({
+                autoOpen: false,
+                modal: false
+            });
+            // Show kmlloading:
+            $("#kmlloading").dialog('open');
             // Pre-cache URL:
             $.ajax({
                 type: 'GET',
                 url: href,
                 success: function() {
-                    //TODO: remove loading
+                    $("#kmlloading").dialog('close');
+                    link.setHref(href);
+
+                    var networkLink = window.ge.createNetworkLink('');
+                    networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
+
+                    RemoveAllFeatures()
+
+                    window.ge.getFeatures().appendChild(networkLink);
                 },
                 error: function() {
-                    //TODO: remove loading, show error
+                    $("#kmlloading").dialog('close');
+                    $("#kmlloading-error").dialog('open');
                 }
             });
 
-            link.setHref(href);
-
-            var networkLink = window.ge.createNetworkLink('');
-            networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
-
-            RemoveAllFeatures()
-
-            window.ge.getFeatures().appendChild(networkLink);
         });
 
         window.loadMaps = function () {
