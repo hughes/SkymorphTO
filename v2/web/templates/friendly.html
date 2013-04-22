@@ -418,67 +418,59 @@
         }
 
         var counter = 0;
+        var movethreshhold = 10;
 
         //request animation frame and connect to leap socket
-        /*
-        Leap.loop(function(frame) {
+        Leap.loop({enableGestures: true}, function(frame) {
             if (frame.valid) {
                 if (!firstValidFrame) firstValidFrame = frame
                 var t = firstValidFrame.translation(frame)
 
-                if (frame.hands && frame.hands.length > 0) {
-                    var hand = frame.hands[0];
-                    if (window.ge) {
-                        counter++;
-                        if (counter > 2) {
-                            counter = 0;
-                            window.ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
-                            var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_ABSOLUTE);
-                            var latitude = 0;
-                            var longitude = 0;
-                            var range = 1.0;
+                if (frame.hands.length > 0) {
+                    counter++;
+                    if (counter > movethreshhold) {
+                        counter = 0;
+                        var lookAt = window.ge.getView().copyAsLookAt(window.ge.ALTITUDE_ABSOLUTE);
+                        var hand = frame.hands[0];
+                        var longitude = 0;
+                        var latitude = 0;
+                        var zoom = 1;
+                        var threshhold = 0.2;
 
-                            if (hand._translation[0] < 0) {
-                                longitude = 1;
-                            }
-                            if (hand._translation[0] > 0) {
-                                longitude = -1;
-                            }
-                            if (hand._translation[1] < 200) {
-                                latitude = -1.0;
-                            }
-                            if (hand._translation[1] > 200) {
-                                latitude = 1.0;
-                            }
-                            if (hand._translation[2] < 0) {
-                                range = 0.1;
-                            }
-                            if (hand._translation[2] > 0) {
-                                range = 10.0;
-                            }
-                            lookAt.setLongitude(lookAt.getLongitude() + longitude);
-                            //lookAt.setLatitude(lookAt.getLatitude() + latitude);
-                            //lookAt.setRange(lookAt.getRange() * range);
-
-                            ge.getView().setAbstractView(lookAt);
+                        console.log(hand.palmNormal);
+                        var v = {
+                            x: hand.palmNormal[0],
+                            y: hand.palmNormal[2]
                         }
+
+                        // bank hand left: /
+                        if (v.x > threshhold) {
+                            longitude = 1;
+                        }
+                        // bank hand right: \
+                        else if (v.x < -threshhold) {
+                            longitude = -1;
+                        }
+
+                        // bank hand forward
+                        if (v.y > threshhold) {
+                            latitude = 1;
+                        } else if (v.y < -threshhold) {
+                            latitude = -1;
+                        }
+
+                        // Use movement
+                        window.ge.getOptions().setFlyToSpeed(ge.SPEED_TELEPORT);
+                        //window.ge.getOptions().setFlyToSpeed(1.0);
+                        lookAt.setLongitude(lookAt.getLongitude() + longitude);
+                        lookAt.setLatitude(lookAt.getLatitude() + latitude);
+                        //lookAt.setRange(lookAt.getRange() * zoom);
+                        ge.getView().setAbstractView(lookAt);
                     }
                 }
 
-                //limit y-axis between 0 and 180 degrees
-                //curY = map(t[1], -300, 300, 0, 179)
-
-                ////assign rotation coordinates
-                //rotateX = t[0]
-                //rotateY = -curY
-
-                //zoom = Math.max(0, t[2]);
-                //zoomFactor = 1/(1 + (zoom / 150));
-
-                ////console.log(rotateX, rotateY, zoom, zoomFactor);
             }
         }.bind(this));
-        */
     });
     </script>
 </body>
